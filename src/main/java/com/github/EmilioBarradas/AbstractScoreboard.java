@@ -22,7 +22,7 @@ public abstract class AbstractScoreboard {
     /**
      * Constructs a new AbstractScoreboard.
      */
-    AbstractScoreboard() {
+    protected AbstractScoreboard() {
         initializeLines();
         initializeDefaults();
 
