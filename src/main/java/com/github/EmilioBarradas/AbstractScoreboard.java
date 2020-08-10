@@ -13,10 +13,24 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 public abstract class AbstractScoreboard {
-    private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    /**
+     * The underlying bukkit scoreboard used for the abstract scoreboard.
+     */
+    private final Scoreboard scoreboard =
+        Bukkit.getScoreboardManager().getNewScoreboard();
+    /**
+     * The scoreboard objective used for the abstract scoreboard.
+     */
     @SuppressWarnings("deprecation") // displayName is set in constructor.
-    private final Objective objective = scoreboard.registerNewObjective("...", "dummy");
+    private final Objective objective =
+        scoreboard.registerNewObjective("...", "dummy");
+    /**
+     * The lines of the underlying scoreboard.
+     */
     private final HashMap<Integer, Team> lines = new HashMap<>();
+    /**
+     * The entries of the underlying scoreboard.
+     */
     private final HashMap<Integer, String> entries = new HashMap<>();
 
     /**
@@ -34,11 +48,15 @@ public abstract class AbstractScoreboard {
      * Creates the scoreboard's underlying line entries.
      */
     private void initializeLines() {
-        String[] entries = {"&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e"};
+        String[] entries = {"&0", "&1", "&2", "&3", "&4", "&5", "&6",
+                            "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e"};
 
+        // CHECKSTYLE.OFF: MagicNumber
+        // 15 is the maximum amount of lines on a scoreboard.
         for (int i = 1; i <= 15; i++) {
             String teamID = RandomStringUtils.random(16);
-            String entry = ChatColor.translateAlternateColorCodes('&', entries[i - 1]);
+            String entry =
+                ChatColor.translateAlternateColorCodes('&', entries[i - 1]);
 
             Team team = scoreboard.registerNewTeam(teamID);
             team.addEntry(entry);
@@ -46,6 +64,7 @@ public abstract class AbstractScoreboard {
             this.lines.put(i, team);
             this.entries.put(i, entry);
         }
+        // CHECKSTYLE.ON: MagicNumber
     }
 
     /**
@@ -53,12 +72,15 @@ public abstract class AbstractScoreboard {
      * @param lineNum - the line number of the entry
      * @param value - the new value of the entry
      */
-    public void setLine(int lineNum, String value) {
+    public void setLine(final int lineNum, final String value) {
         setScore(lineNum);
 
-        String translatedValue = ChatColor.translateAlternateColorCodes('&', value);
+        String translatedValue =
+            ChatColor.translateAlternateColorCodes('&', value);
         Team team = lines.get(lineNum);
 
+        // CHECKSTYLE.OFF: MagicNumber
+        // 16 is maximum string length for a scoreboard entry.
         if (translatedValue.length() <= 16) {
             team.setPrefix(translatedValue);
             return;
@@ -69,33 +91,37 @@ public abstract class AbstractScoreboard {
         String lastCode = ChatColor.getLastColors(prefix);
 
         String suffix = lastCode + translatedValue.substring(16);
+        // CHECKSTYLE.ON: MagicNumber
 
         team.setPrefix(prefix);
         team.setSuffix(suffix);
     }
 
     /**
-     * Sets the score of the entry at the specified {@code lineNum} to {@code lineNum}.
+     * Sets the score of the entry at the
+     * specified {@code lineNum} to {@code lineNum}.
      * @param lineNum - the line number of the entry to set the score of
      */
-    private void setScore(int lineNum) {
+    private void setScore(final int lineNum) {
         Score score = objective.getScore(entries.get(lineNum));
-        if (!score.isScoreSet()) score.setScore(lineNum);
+        if (!score.isScoreSet()) {
+            score.setScore(lineNum);
+        }
     }
 
     /**
      * Deletes the line at the specified {@code lineNum} from the scoreboard.
      * @param lineNum - the line number of the entry to delete the line of
      */
-    public void deleteLine(int lineNum) {
+    public void deleteLine(final int lineNum) {
         scoreboard.resetScores(entries.get(lineNum));
     }
 
     /**
-     * Applys the scoreboard to the specified player
+     * Applys the scoreboard to the specified player.
      * @param player - the player to apply the scoreboard to
      */
-    public void apply(Player player) {
+    public void apply(final Player player) {
         player.setScoreboard(scoreboard);
     }
 
