@@ -43,7 +43,7 @@ public abstract class AbstractScoreboard {
             Team team = scoreboard.registerNewTeam(teamID);
             team.addEntry(entry);
 
-            lines.put(i, team);
+            this.lines.put(i, team);
             this.entries.put(i, entry);
         }
     }
@@ -81,6 +81,14 @@ public abstract class AbstractScoreboard {
     private void setScore(int lineNum) {
         Score score = objective.getScore(entries.get(lineNum));
         if (!score.isScoreSet()) score.setScore(lineNum);
+    }
+
+    /**
+     * Deletes the line at the specified {@code lineNum} from the scoreboard.
+     * @param lineNum - the line number of the entry to delete the line of
+     */
+    public void deleteLine(int lineNum) {
+        scoreboard.resetScores(entries.get(lineNum));
     }
 
     /**
