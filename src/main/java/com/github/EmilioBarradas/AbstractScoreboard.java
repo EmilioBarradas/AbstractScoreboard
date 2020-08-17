@@ -83,6 +83,7 @@ public abstract class AbstractScoreboard {
         // 16 is maximum string length for a scoreboard entry.
         if (translatedValue.length() <= 16) {
             team.setPrefix(translatedValue);
+            team.setSuffix("");
             return;
         }
 
