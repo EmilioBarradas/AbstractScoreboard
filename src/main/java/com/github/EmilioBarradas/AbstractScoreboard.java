@@ -11,6 +11,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.Team.Option;
+import org.bukkit.scoreboard.Team.OptionStatus;
 
 public abstract class AbstractScoreboard {
     /**
@@ -124,6 +126,12 @@ public abstract class AbstractScoreboard {
      */
     public void apply(final Player player) {
         player.setScoreboard(scoreboard);
+
+        Team team = scoreboard.getTeam("collisions");
+
+        if (team != null) {
+            team.addEntry(player.getName());
+        }
     }
 
     /**
@@ -131,6 +139,25 @@ public abstract class AbstractScoreboard {
      */
     public String getName() {
         return ChatColor.translateAlternateColorCodes('&', getDisplayName());
+    }
+
+    /**
+     * Sets whether the players of this scoreboard
+     * should collide with other players.
+     * @param collisions {@code true} if the players should
+     *                   collide, otherwise {@code false}.
+     */
+    public void setCollisions(final boolean collisions) {
+        Team team = scoreboard.getTeam("collisions");
+
+        if (team == null) {
+            team = scoreboard.registerNewTeam("collisions");
+        }
+
+        team.setOption(
+            Option.COLLISION_RULE,
+            collisions ? OptionStatus.ALWAYS : OptionStatus.NEVER
+        );
     }
 
     /**
