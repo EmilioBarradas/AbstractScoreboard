@@ -1,6 +1,8 @@
 package com.github.EmilioBarradas;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
@@ -15,6 +17,12 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 public abstract class AbstractScoreboard {
+    /**
+     * The pattern used to split entry lines.
+     */
+    private static final Pattern LINE_SPLITTER =
+        Pattern.compile(".{1,16}(?<!&)");
+
     /**
      * The underlying bukkit scoreboard used for the abstract scoreboard.
      */
@@ -82,19 +90,25 @@ public abstract class AbstractScoreboard {
         Team team = lines.get(lineNum);
 
         // CHECKSTYLE.OFF: MagicNumber
-        // 16 is maximum string length for a scoreboard entry.
+        // 16 is maximum string length for a scoreboard entry
+        // without a prefix and a suffix.
         if (translatedValue.length() <= 16) {
             team.setPrefix(translatedValue);
             team.setSuffix("");
             return;
         }
+        // CHECKSTYLE.ON: MagicNumber
 
-        String prefix = translatedValue.substring(0, 16);
+        Matcher matcher = LINE_SPLITTER.matcher(translatedValue);
 
+        matcher.find();
+
+        String prefix = matcher.group();
         String lastCode = ChatColor.getLastColors(prefix);
 
-        String suffix = lastCode + translatedValue.substring(16);
-        // CHECKSTYLE.ON: MagicNumber
+        matcher.find();
+
+        String suffix = lastCode + matcher.group();
 
         team.setPrefix(prefix);
         team.setSuffix(suffix);
