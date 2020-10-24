@@ -85,30 +85,28 @@ public abstract class AbstractScoreboard {
     public void setLine(final int lineNum, final String value) {
         setScore(lineNum);
 
-        String translatedValue =
-            ChatColor.translateAlternateColorCodes('&', value);
         Team team = lines.get(lineNum);
 
         // CHECKSTYLE.OFF: MagicNumber
         // 16 is maximum string length for a scoreboard entry
         // without a prefix and a suffix.
-        if (translatedValue.length() <= 16) {
-            team.setPrefix(translatedValue);
+        if (value.length() <= 16) {
+            team.setPrefix(color(value));
             team.setSuffix("");
             return;
         }
         // CHECKSTYLE.ON: MagicNumber
 
-        Matcher matcher = LINE_SPLITTER.matcher(translatedValue);
+        Matcher matcher = LINE_SPLITTER.matcher(value);
 
         matcher.find();
 
-        String prefix = matcher.group();
+        String prefix = color(matcher.group());
         String lastCode = ChatColor.getLastColors(prefix);
 
         matcher.find();
 
-        String suffix = lastCode + matcher.group();
+        String suffix = color(lastCode + matcher.group());
 
         team.setPrefix(prefix);
         team.setSuffix(suffix);
@@ -172,6 +170,15 @@ public abstract class AbstractScoreboard {
             Option.COLLISION_RULE,
             collisions ? OptionStatus.ALWAYS : OptionStatus.NEVER
         );
+    }
+
+    /**
+     * Translates the string into a colored string.
+     * @param value the value to translate.
+     * @return the translated string.
+     */
+    public String color(final String value) {
+        return ChatColor.translateAlternateColorCodes('&', value);
     }
 
     /**
