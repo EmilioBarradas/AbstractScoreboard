@@ -1,5 +1,6 @@
 package com.github.EmilioBarradas;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -130,6 +131,14 @@ public abstract class AbstractScoreboard {
      */
     public void deleteLine(final int lineNum) {
         scoreboard.resetScores(entries.get(lineNum));
+    }
+
+    /**
+     * Applys the scoreboard to the specified players.
+     * @param players - the players to apply the scoreboard to
+     */
+    public void apply(final Collection<? extends Player> players) {
+        players.forEach(p -> apply(p));
     }
 
     /**
